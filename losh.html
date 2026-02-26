@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IoT Smart Health Assist</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            background: #f4f9ff;
+        }
+
+        header {
+            background: #1e3d59;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 20px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        button {
+            padding: 8px 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #218838;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+        }
+
+        .chatbox {
+            height: 200px;
+            overflow-y: auto;
+            background: #eef;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .emergency-text {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🧠 IoT Smart Health Monitoring & AI Assistant</h1>
+</header>
+
+<div class="container">
+
+    <!-- IoT Monitoring -->
+    <div class="card" id="iotCard">
+        <h2>📡 Live IoT Health Monitoring</h2>
+        <p>Heart Rate: <span id="heartRate">--</span> bpm</p>
+        <p>Temperature: <span id="temperature">--</span> °C</p>
+        <p>Oxygen Level: <span id="oxygen">--</span> %</p>
+        <button onclick="generateVitals()">Generate Live Readings</button>
+    </div>
+
+    <!-- AI Chatbot -->
+    <div class="card">
+        <h2>🤖 AI Health Chatbot</h2>
+        <div class="chatbox" id="chatbox"></div>
+        <input type="text" id="userInput" placeholder="Describe your symptoms...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <!-- Appointment -->
+    <div class="card" id="appointmentCard">
+        <h2>📅 Book Appointment</h2>
+        <input type="text" id="patientName" placeholder="Enter your name">
+        <input type="date" id="appointmentDate">
+        <button onclick="bookAppointment()">Confirm Appointment</button>
+    </div>
+
+</div>
+
+<script>
+
+function generateVitals() {
+
+    let heart = Math.floor(Math.random() * 40) + 60;
+    let temp = (Math.random() * 2 + 36).toFixed(1);
+    let oxygen = Math.floor(Math.random() * 5) + 95;
+
+    document.getElementById("heartRate").innerText = heart;
+    document.getElementById("temperature").innerText = temp;
+    document.getElementById("oxygen").innerText = oxygen;
+
+    // Remove old emergency text
+    let oldMessage = document.getElementById("emergencyMessage");
+    if (oldMessage) {
+        oldMessage.remove();
+    }
+
+    // Check emergency
+    if (heart > 100 || temp > 38 || oxygen < 94) {
+
+        let emergencyDiv = document.createElement("div");
+        emergencyDiv.id = "emergencyMessage";
+        emergencyDiv.className = "emergency-text";
+        emergencyDiv.innerHTML =
+            "🚨 EMERGENCY DETECTED! Immediate medical attention required.";
+
+        document.getElementById("iotCard").appendChild(emergencyDiv);
+    }
+}
+
+function sendMessage() {
+
+    let inputField = document.getElementById("userInput");
+    let input = inputField.value.toLowerCase().trim();
+
+    if (input === "") return;
+
+    let chatbox = document.getElementById("chatbox");
+    chatbox.innerHTML += "<p><b>You:</b> " + input + "</p>";
+
+    let response = "";
+
+    if (input.includes("chest")) {
+        response = "⚠ Chest pain detected. Cardiologist consultation required.";
+        alert("🚨 EMERGENCY ALERT! Chest pain can be serious. Seek immediate care.");
+    }
+    else if (input.includes("breathing")) {
+        response = "⚠ Breathing issue detected. Emergency care recommended.";
+        alert("🚨 EMERGENCY ALERT! Breathing problem detected. Visit hospital immediately.");
+    }
+    else if (input.includes("skin")) {
+        response = "You should consult a Dermatologist.";
+    }
+    else if (input.includes("fever")) {
+        response = "Consult a General Physician.";
+    }
+    else {
+        response = "Please provide more details about your symptoms.";
+    }
+
+    chatbox.innerHTML += "<p><b>AI:</b> " + response + "</p>";
+    chatbox.scrollTop = chatbox.scrollHeight;
+
+    inputField.value = "";
+}
+
+function bookAppointment() {
+
+    let name = document.getElementById("patientName").value.trim();
+    let date = document.getElementById("appointmentDate").value;
+
+    if (name === "" || date === "") {
+        alert("Please fill all details.");
+        return;
+    }
+
+    let appointmentID = "APT" + Math.floor(Math.random() * 10000);
+
+    document.getElementById("appointmentCard").style.display = "none";
+
+    let successCard = document.createElement("div");
+    successCard.className = "card";
+    successCard.innerHTML = `
+        <h2 style="color:green;">✅ Your Appointment Has Been Successfully Completed</h2>
+        <p><b>Patient Name:</b> ${name}</p>
+        <p><b>Appointment Date:</b> ${date}</p>
+        <p><b>Appointment ID:</b> ${appointmentID}</p>
+        <p>Our medical team will contact you shortly.</p>
+        <button onclick="location.reload()">Book Another Appointment</button>
+    `;
+
+    document.querySelector(".container").appendChild(successCard);
+}
+
+</script>
+
+</body>
+</html>
